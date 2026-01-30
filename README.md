@@ -5,9 +5,9 @@ Compatible only with GTA2 9.6.0.0
 ## List of controls:
 
 Added layout.
+`ControlSetP1 = 5`
 
-
-
+![Alt text](pad.png)
 
 Original mod layouts: 
 
