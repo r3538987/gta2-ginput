@@ -4,6 +4,13 @@ Compatible only with GTA2 9.6.0.0
 
 ## List of controls:
 
+Added layout.
+
+
+
+
+Original mod layouts: 
+
 ### A/1:
 - Previous Weapon: L2
 - Next Weapon: L1
