@@ -59,6 +59,10 @@ public:
                 previousDamage[index] = car->m_nDamage;
             }
         }
+        if (!car && pad->GetSpecial()) {
+            pad->StartShake(50, 80);
+        }
+
     }
 
     static void ProcessPlayerControls(CPlayerPed* _this) {
