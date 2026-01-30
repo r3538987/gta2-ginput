@@ -257,6 +257,8 @@ bool CPad::GetForward() {
 		return NewState.Triangle;
 	case 3:
 		return NewState.LeftShoulder1;
+	case 5:
+		return NewState.RightShoulder2;
 	}
 
 	return false;
@@ -278,6 +280,8 @@ bool CPad::GetBackward() {
 	case 3:
 	case 4:
 		return NewState.LeftShoulder2;
+	case 5:
+		return NewState.LeftShoulder2;
 	}
 
 	return false;
@@ -295,6 +299,7 @@ bool CPad::GetLeft() {
 	case 2:
 	case 3:
 	case 4:
+	case 5:
 		return NewState.DPadLeft || NewState.LeftStickX < 0;
 	}
 
@@ -313,6 +318,7 @@ bool CPad::GetRight() {
 	case 2:
 	case 3:
 	case 4:
+	case 5:
 		return NewState.DPadRight || NewState.LeftStickX > 0;
 	}
 
@@ -335,6 +341,8 @@ bool CPad::GetFire() {
 	case 3:
 	case 4:
 		return NewState.Triangle;
+	case 5:
+		return NewState.Square;
 	}
 
 	return false;
@@ -357,6 +365,8 @@ bool CPad::GetEnterExitVehicle() {
 		return NewState.Cross && !OldState.Cross;
 	case 4:
 		return NewState.Circle && !OldState.Circle;
+	case 5:
+		return NewState.Triangle && !OldState.Triangle;
 	}
 
 	return false;
@@ -377,6 +387,8 @@ bool CPad::GetHandbrake() {
 		return NewState.Circle;
 	case 4:
 		return NewState.LeftShoulder1;
+	case 5:
+		return NewState.Cross;
 	}
 
 	return false;
@@ -397,6 +409,8 @@ bool CPad::GetJump() {
 		return NewState.Circle && !OldState.Circle;
 	case 4:
 		return NewState.LeftShoulder1 && !OldState.LeftShoulder1;
+	case 5:
+		return NewState.Cross && !OldState.Cross;
 	}
 
 	return false;
@@ -416,6 +430,8 @@ bool CPad::GetCycleWeaponLeft() {
 	case 3:
 	case 4:
 		return NewState.RightShoulder2 && !OldState.RightShoulder2;
+	case 5:
+		return NewState.LeftShoulder1 && !OldState.LeftShoulder1;
 	}
 
 	return false;
@@ -434,6 +450,8 @@ bool CPad::GetCycleWeaponRight() {
 		return NewState.LeftShoulder1 && !OldState.LeftShoulder1;
 	case 3:
 	case 4:
+		return NewState.RightShoulder1 && !OldState.RightShoulder1;
+	case 5:
 		return NewState.RightShoulder1 && !OldState.RightShoulder1;
 	}
 
@@ -455,6 +473,8 @@ bool CPad::GetSpecial() {
 	case 3:
 	case 4:
 		return NewState.Square && !OldState.Square;
+	case 5:
+		return NewState.Circle && !OldState.Circle;
 	}
 
 	return false;
@@ -474,7 +494,8 @@ bool CPad::GetHorn() {
 	case 2:
 	case 3:
 	case 4:
-		return NewState.Square;
+	case 5:
+		return NewState.Circle;
 	}
 
 	return false;
