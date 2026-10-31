@@ -1,0 +1,80 @@
+diff --git a/plugin_II/game_II/CCarManager.h b/plugin_II/game_II/CCarManager.h
+index fd02984c..a2ae788a 100644
+--- a/plugin_II/game_II/CCarManager.h
++++ b/plugin_II/game_II/CCarManager.h
+@@ -12,16 +12,16 @@ class CCarManager {
+ public:
+     CCar* m_pFirst;
+     CCar* m_pLast;
+-    CCar* m_pCars[306];
++    CCar m_aCars[306];
+     short m_nCarsCount;
+     char pad[2];
+ };
+ VALIDATE_OFFSET(CCarManager, m_pFirst, 0x0);
+ VALIDATE_OFFSET(CCarManager, m_pLast, 0x4);
+-VALIDATE_OFFSET(CCarManager, m_pCars, 0x8);
+-VALIDATE_OFFSET(CCarManager, m_nCarsCount, 0x4D0);
+-VALIDATE_OFFSET(CCarManager, pad, 0x4D2);
+-VALIDATE_SIZE(CCarManager, 0x4D4);
++VALIDATE_OFFSET(CCarManager, m_aCars, 0x8);
++VALIDATE_OFFSET(CCarManager, m_nCarsCount, 0xE0C0);
++VALIDATE_OFFSET(CCarManager, pad, 0xE0C2);
++VALIDATE_SIZE(CCarManager, 0xE0C4);
+ 
+ extern CCarManager** gCarManager;
+ 
+diff --git a/shared/DynAddress.cpp b/shared/DynAddress.cpp
+index e6a0b8e4..90a5b49f 100644
+--- a/shared/DynAddress.cpp
++++ b/shared/DynAddress.cpp
+@@ -20,12 +20,28 @@ uintptr_t _NOINLINE_ plugin::GetBaseAddress() {
+ }
+ 
+ uintptr_t _NOINLINE_ plugin::GetGlobalAddress(uintptr_t address) {
++#ifdef GTA2
++    // GTA2 executables have relocations stripped and plugin_II addresses are
++    // fixed virtual addresses. Version 11.44 changes the preferred image base
++    // from 0x400000 to 0x3F0000 while preserving the original code and data at
++    // their old absolute addresses, so applying a module-base delta points all
++    // hooks 0x10000 too low.
++    return address;
++#else
+     return GetBaseAddress() - STARTING_ADDRESS + address;
++#endif
+ }
+ 
+ const uintptr_t _NOINLINE_ plugin::GetExternalAddress(const char* processName, uintptr_t shift, uintptr_t address) {
+     uintptr_t addr = reinterpret_cast<uintptr_t>(GetModuleHandleA(processName));
++#ifdef GTA2
++    // External GTA2 module addresses must only account for that module's
++    // actual load base. The main gta2.exe image-base difference in 11.44 is
++    // unrelated and would move d3ddll.dll pointers 0x10000 too low.
++    return addr - shift + address;
++#else
+     return (GetBaseAddress() - STARTING_ADDRESS) + (addr - shift + address);
++#endif
+ }
+ 
+ #if !(defined (_M_IX86) || defined (_X86_))
+diff --git a/shared/GameVersion.cpp b/shared/GameVersion.cpp
+index 908480f5..914a3125 100644
+--- a/shared/GameVersion.cpp
++++ b/shared/GameVersion.cpp
+@@ -47,7 +47,15 @@ unsigned int _NOINLINE_ detect_game_id() {
+ #endif
+ #ifdef GTA2
+     if (plugin::patch::GetUInt(0x401000) == 0x5D22D4A1)
+-        return GAME_9600EN; 
++        return GAME_9600EN;
++
++    // Experimental compatibility fallback: plugin-sdk currently has address
++    // information only for GTA2 9.6. Treat other GTA2 executables (including
++    // 11.44) as 9.6 so version-gated events are installed and plugins can be
++    // tested against the existing addresses.
++    //
++    // This does not make the hard-coded 9.6 addresses safe for other builds.
++    return GAME_9600EN;
+ #endif
+ #ifdef GTAIV
+         return GAME_CE;
